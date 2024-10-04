@@ -14,14 +14,28 @@ struct TaskItem: Identifiable, Hashable {
     var isComplete: Bool
 }
 
+class ViewModel: ObservableObject {
+    @Published var tasks: [TaskItem] = []
+    
+    func updateTask(task: TaskItem) {
+        let index = tasks.firstIndex(where: {
+            $0.id == task.id
+        })
+        
+        guard let unwrappedIndex = index else { return }
+        
+        tasks[unwrappedIndex].isComplete.toggle()
+    }
+}
+
 struct ContentView: View {
-    @State var tasks: [TaskItem] = []
+    @StateObject var viewModel: ViewModel = ViewModel()
     @State var displayAddNewTask: Bool = false
     
     var body: some View {
         NavigationStack {
             VStack {
-                List(tasks) { task in
+                List(viewModel.tasks) { task in
                     HStack {
                         Image(systemName: task.isComplete ? "circle.fill" : "circle")
                         
@@ -31,13 +45,7 @@ struct ContentView: View {
                         }
                     }
                     .onTapGesture {
-                        let index = tasks.firstIndex(where: {
-                            $0.id == task.id
-                        })
-                        
-                        guard let unwrappedIndex = index else { return }
-                        
-                        tasks[unwrappedIndex].isComplete.toggle()
+                        viewModel.updateTask(task: task)
                     }
                 }
             }
@@ -50,7 +58,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $displayAddNewTask) {
-                AddNewTask(tasks: $tasks)
+                AddNewTask(viewModel: viewModel)
             }
         }
     }
@@ -60,7 +68,7 @@ struct AddNewTask: View {
     @State var title: String = ""
     @State var description: String = ""
     
-    @Binding var tasks: [TaskItem]
+    @ObservedObject var viewModel: ViewModel
     
     @Environment(\.dismiss) var dismiss
     
@@ -88,7 +96,7 @@ struct AddNewTask: View {
                         let newTask = TaskItem(title: title,
                                                description: description,
                                                isComplete: false)
-                        tasks.append(newTask)
+                        viewModel.tasks.append(newTask)
                         dismiss()
                     }
                 }
