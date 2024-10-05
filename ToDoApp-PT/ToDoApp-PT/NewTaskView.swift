@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NewTaskView: View {
-    @Binding var myTasks: [TaskModel]
+    @ObservedObject var viewModel: ViewModel
     
     @State var title: String = ""
     @State var description: String = ""
@@ -39,7 +39,7 @@ struct NewTaskView: View {
                     Button("Add") {
                         let newTask = TaskModel(title: title,
                                                 description: description)
-                        myTasks.append(newTask)
+                        viewModel.myTasks.append(newTask)
                         dismiss()
                     }
                 }
@@ -49,5 +49,5 @@ struct NewTaskView: View {
 }
 
 #Preview {
-    NewTaskView(myTasks: .constant([]))
+    NewTaskView(viewModel: ViewModel())
 }

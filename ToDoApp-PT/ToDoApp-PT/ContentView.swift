@@ -7,26 +7,19 @@
 
 import SwiftUI
 
-struct TaskModel: Identifiable {
-    var id: String = UUID().uuidString
-    var title: String
-    var description: String
-    var isCompleted: Bool = false
-}
-
 struct ContentView: View {
-    @State var myTasks: [TaskModel] = []
+    @StateObject var viewModel: ViewModel = ViewModel()
     @State var showSheet: Bool = false
     
     var body: some View {
         NavigationStack {
             VStack {
-                if myTasks.isEmpty {
+                if viewModel.myTasks.isEmpty {
                     ContentUnavailableView("No Tasks",
                                            systemImage: "tray",
                                            description: Text("Add your first task by clicking on + icon above"))
                 } else {
-                    List(myTasks) { task in
+                    List(viewModel.myTasks) { task in
                         HStack {
                             Image(systemName: task.isCompleted ? "circle.fill" : "circle")
                             
@@ -36,13 +29,7 @@ struct ContentView: View {
                             }
                         }
                         .onTapGesture {
-                            let index = myTasks.firstIndex(where: {
-                                $0.id == task.id
-                            })
-                            
-                            guard let unwrappedIndex = index else { return }
-                            
-                            myTasks[unwrappedIndex].isCompleted.toggle()
+                            viewModel.updateTask(task: task)
                         }
                     }
                 }
@@ -56,7 +43,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showSheet) {
-                NewTaskView(myTasks: $myTasks)
+                NewTaskView(viewModel: viewModel)
             }
         }
     }
