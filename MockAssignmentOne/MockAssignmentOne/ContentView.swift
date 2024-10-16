@@ -8,14 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("systemFontSize") var systemFontSize: Double = 16
+    @AppStorage("systemColor") var systemColor: String = "Green"
+    
     var body: some View {
         TabView {
-            GameView()
+            GameView(preferredFontSize: $systemFontSize,
+                     preferredSystemColor: $systemColor)
                 .tabItem {
                     Label("Guess", systemImage: "house")
                 }
             
-            SettingsView()
+            SettingsView(preferredFontSize: $systemFontSize,
+                         preferredSystemColor: $systemColor)
                 .tabItem {
                     Label("Settings", systemImage: "gear.circle.fill")
                 }

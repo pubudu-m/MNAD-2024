@@ -15,6 +15,9 @@ enum MathOperator: String, CaseIterable {
 }
 
 struct GameView: View {
+    @Binding var preferredFontSize: Double
+    @Binding var preferredSystemColor: String
+    
     @State var firstNumber: Int = Int.random(in: 0...9)
     @State var secondNumber: Int = Int.random(in: 0...9)
     @State var mathOperator: MathOperator = MathOperator.allCases.randomElement()!
@@ -26,9 +29,12 @@ struct GameView: View {
     @State var showAnwserStatus: Bool = false
     @State var anwserStatus: Bool = false
     
-    
     var body: some View {
         VStack {
+            Text("Guess the answer")
+                .foregroundStyle(Color(preferredSystemColor))
+                .font(.system(size: preferredFontSize))
+            
             Text("What is \(firstNumber) \(mathOperator.rawValue) \(secondNumber)?")
                 .font(.largeTitle)
                 .fontWeight(.bold)
@@ -53,7 +59,6 @@ struct GameView: View {
                     
                     showAnwserStatus = true
                 }
-                .disabled(userInput == nil)
                 .buttonStyle(.bordered)
                 .tint(.blue)
             }
@@ -105,5 +110,6 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView()
+    GameView(preferredFontSize: .constant(16),
+             preferredSystemColor: .constant("Green"))
 }
