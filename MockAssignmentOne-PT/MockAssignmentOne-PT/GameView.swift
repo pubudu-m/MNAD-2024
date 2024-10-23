@@ -25,12 +25,14 @@ struct GameView: View {
     @State var isAnswerCorrect: Bool = false
     
     @Binding var preferredFontSize: Double
+    @Binding var preferredSystemColor: AppThemeColor
     
     var body: some View {
         VStack {
             Text("What is \(randomNumberOne) \(randomOperator.rawValue) \(randomNumberTwo)?")
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .foregroundStyle(Color(preferredSystemColor.rawValue))
             
             HStack {
                 TextField("Answer", value: $userInput, format: .number)
@@ -70,6 +72,7 @@ struct GameView: View {
                 Text("Submit the correct answer and gain 1 point.")
             }
             .font(.system(size: preferredFontSize))
+            .multilineTextAlignment(.center)
             
             Button("Next") {
                 userInput = nil
@@ -108,5 +111,6 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(preferredFontSize: .constant(0))
+    GameView(preferredFontSize: .constant(0),
+             preferredSystemColor: .constant(.red))
 }
